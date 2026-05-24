@@ -12,13 +12,12 @@ public class Main {
 
         do {
 
-            System.out.println("\n===== MENU =====");
+            System.out.println("\n=== MENU ===");
             System.out.println("1 - Cadastrar");
             System.out.println("2 - Listar");
             System.out.println("3 - Editar");
             System.out.println("4 - Excluir");
             System.out.println("0 - Sair");
-            System.out.print("Escolha: ");
 
             opcao = sc.nextInt();
 
@@ -26,14 +25,15 @@ public class Main {
 
                 case 1:
 
-                    System.out.print("ID: ");
+                    System.out.println("ID:");
                     int id = sc.nextInt();
+
                     sc.nextLine();
 
-                    System.out.print("Nome: ");
+                    System.out.println("Nome:");
                     String nome = sc.nextLine();
 
-                    System.out.print("Preço: ");
+                    System.out.println("Preço:");
                     double preco = sc.nextDouble();
 
                     Produto produto = new Produto(id, nome, preco);
@@ -50,32 +50,33 @@ public class Main {
 
                 case 3:
 
-                    System.out.print("ID do produto: ");
-                    int idEditar = sc.nextInt();
+                    System.out.println("ID do produto:");
+                    int editarId = sc.nextInt();
+
                     sc.nextLine();
 
-                    System.out.print("Novo nome: ");
+                    System.out.println("Novo nome:");
                     String novoNome = sc.nextLine();
 
-                    System.out.print("Novo preço: ");
+                    System.out.println("Novo preço:");
                     double novoPreco = sc.nextDouble();
 
-                    service.editarProduto(idEditar, novoNome, novoPreco);
+                    service.editarProduto(editarId, novoNome, novoPreco);
 
                     break;
 
                 case 4:
 
-                    System.out.print("ID do produto: ");
-                    int idExcluir = sc.nextInt();
+                    System.out.println("ID do produto:");
+                    int excluirId = sc.nextInt();
 
-                    service.excluirProduto(idExcluir);
+                    service.excluirProduto(excluirId);
 
                     break;
 
                 case 0:
 
-                    System.out.println("Encerrando sistema...");
+                    System.out.println("Sistema encerrado.");
 
                     break;
 
