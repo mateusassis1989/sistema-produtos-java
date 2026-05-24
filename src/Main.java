@@ -1,37 +1,40 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
-        try {
-            // conexão com banco
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:produtos.db");
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:produtos.db");
+             Statement stmt = conn.createStatement();
+             Scanner scanner = new Scanner(System.in)) {
 
-            Statement stmt = conn.createStatement();
+            ProdutoService service = new ProdutoService(conn, stmt);
+            service.criarTabela();
 
-            // criar tabela
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS produtos (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nome TEXT
-                )
-            """);
+            int opcao;
 
-            // inserir dado de teste
-            stmt.execute("INSERT INTO produtos (nome) VALUES ('Teclado')");
+            do {
+                System.out.println("\n===== MENU =====");
+                System.out.println("1 - Cadastrar");
+                System.out.println("2 - Listar");
+                System.out.println("3 - Editar");
+                System.out.println("4 - Excluir");
+                System.out.println("0 - Sair");
+                System.out.print("Escolha: ");
 
-            // 🔥 AQUI COMEÇA O LOOP (depois do SELECT)
-            ResultSet rs = stmt.executeQuery("SELECT * FROM produtos");
+                opcao = scanner.nextInt();
+                scanner.nextLine();
 
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") + " - " + rs.getString("nome"));
-            }
-            // 🔥 AQUI TERMINA O LOOP
+                switch (opcao) {
+                    case 1 -> service.cadastrar(scanner);
+                    case 2 -> service.listar();
+                    case 3 -> service.editar(scanner);
+                    case 4 -> service.excluir(scanner);
+                    case 0 -> System.out.println("Saindo...");
+                    default -> System.out.println("Opção inválida!");
+                }
 
-            conn.close();
+            } while (opcao != 0);
 
         } catch (Exception e) {
             e.printStackTrace();

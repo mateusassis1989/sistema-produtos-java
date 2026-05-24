@@ -1,63 +1,66 @@
-import java.util.ArrayList;
+import java.sql.*;
+import java.util.Scanner;
 
 public class ProdutoService {
 
-    ArrayList<Produto> produtos = new ArrayList<>();
+    private Connection conn;
+    private Statement stmt;
 
-    public void cadastrarProduto(Produto produto) {
+    public ProdutoService(Connection conn, Statement stmt) {
+        this.conn = conn;
+        this.stmt = stmt;
+    }
 
-        produtos.add(produto);
+    public void criarTabela() throws SQLException {
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS produtos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT
+            )
+        """);
+    }
 
+    public void cadastrar(Scanner scanner) throws SQLException {
+        System.out.print("Nome do produto: ");
+        String nome = scanner.nextLine();
+
+        stmt.execute("INSERT INTO produtos (nome) VALUES ('" + nome + "')");
         System.out.println("Produto cadastrado!");
     }
 
-    public void listarProdutos() {
+    public void listar() throws SQLException {
+        ResultSet rs = stmt.executeQuery("SELECT * FROM produtos");
 
-        if (produtos.isEmpty()) {
+        System.out.println("\n--- LISTA DE PRODUTOS ---");
 
-            System.out.println("Nenhum produto cadastrado.");
-
-        } else {
-
-            for (Produto produto : produtos) {
-
-                System.out.println(produto);
-            }
+        while (rs.next()) {
+            Produto p = new Produto(
+                    rs.getInt("id"),
+                    rs.getString("nome")
+            );
+            System.out.println(p);
         }
+
+        rs.close();
     }
 
-    public void editarProduto(int id, String novoNome, double novoPreco) {
+    public void editar(Scanner scanner) throws SQLException {
+        System.out.print("ID do produto: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
 
-        for (Produto produto : produtos) {
+        System.out.print("Novo nome: ");
+        String nome = scanner.nextLine();
 
-            if (produto.getId() == id) {
-
-                produto.setNome(novoNome);
-                produto.setPreco(novoPreco);
-
-                System.out.println("Produto atualizado!");
-
-                return;
-            }
-        }
-
-        System.out.println("Produto não encontrado.");
+        stmt.execute("UPDATE produtos SET nome = '" + nome + "' WHERE id = " + id);
+        System.out.println("Produto atualizado!");
     }
 
-    public void excluirProduto(int id) {
+    public void excluir(Scanner scanner) throws SQLException {
+        System.out.print("ID do produto: ");
+        int id = scanner.nextInt();
 
-        for (Produto produto : produtos) {
-
-            if (produto.getId() == id) {
-
-                produtos.remove(produto);
-
-                System.out.println("Produto removido!");
-
-                return;
-            }
-        }
-
-        System.out.println("Produto não encontrado.");
+        stmt.execute("DELETE FROM produtos WHERE id = " + id);
+        System.out.println("Produto excluído!");
     }
 }
